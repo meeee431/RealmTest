@@ -6,18 +6,25 @@
 'use strict';
 import React, { Component } from "react";
 import { View, Alert } from "react-native";
-import { Container, Content, List, ListItem, InputGroup, Input, Icon, Text, Picker, Button, Item } from "native-base";
+import { Container, Content, ListItem, InputGroup, Input, Icon, Text, Picker, Button, Item } from "native-base";
 import oilInfo from '../../resource/db/control/oilInfo'
+
+import { DatePicker, List } from 'antd-mobile';
+//时间类型转换工具
+import moment from 'moment';
 export default class AddNewScreen extends Component {
 
     constructor(props) {
         super(props);
+        const gmtNow = moment().utcOffset(0);
         this.state = {
             selectedItem: undefined,
             selected1: 'key0',
             results: {
                 items: [],
             },
+            addDate: gmtNow,
+
         };
     }
     onValueChange(value: string) {
@@ -29,7 +36,12 @@ export default class AddNewScreen extends Component {
 
         let a = new oilInfo();
 
-        a.addInfo(new Date(2017, 4, 19), 2, 3, 4, 5, 6);
+        a.addInfo(new Date(this.state.addDate),
+            Number.parseFloat(this.state.price),
+            Number.parseFloat(this.state.total),
+            Number.parseInt(this.state.trip),
+            Number.parseInt(this.state.preTrip),
+            Number.parseInt(this.state.realTrip));
         let oils = a.queryAll();
 
         this.props.navigation.state.params.oils(oils);
@@ -38,58 +50,92 @@ export default class AddNewScreen extends Component {
         goBack();
 
     }
+    onChange = (addDate) => {
+
+        this.setState({
+            addDate,
+        });
+    }
+    onChange_price = (price) => {
+
+        this.setState({
+            price,
+        });
+    }
+    onChange_total = (total) => {
+
+        this.setState({
+            total,
+        });
+    }
+    onChange_trip = (trip) => {
+
+        this.setState({
+            trip,
+        });
+    }
+    onChange_preTrip = (preTrip) => {
+
+        this.setState({
+            preTrip,
+        });
+    }
+    onChange_realTrip = (realTrip) => {
+
+        this.setState({
+            realTrip,
+        });
+    }
     render() {
         return (
             <Container>
                 <Content>
                     <List>
-                        <ListItem>
+                        <DatePicker mode="date" title="选择日期"
+                            value={this.state.addDate}
+                            onChange={this.onChange}>
+                            <List.Item arrow="horizontal">
+                                选择日期
+                            </List.Item>
+                        </DatePicker>
+                        <List.Item>
                             <InputGroup>
-                                <Input inlineLabel label="First Name" placeholder="John" />
+                                <Icon name="ios-car" style={{ color: '#0A69FE' }} />
+                                <Input placeholder="油价" keyboardType="numeric"
+                                    onChangeText={this.onChange_price} />
                             </InputGroup>
-                        </ListItem>
+                        </List.Item>
+                        <List.Item>
+                            <InputGroup>
 
-                        <ListItem>
-                            <InputGroup>
-                                <Icon name="ios-person" style={{ color: '#0A69FE' }} />
-                                <Input placeholder="EMAIL" />
+                                <Input placeholder="总价" keyboardType="numeric"
+                                    onChangeText={this.onChange_total} />
                             </InputGroup>
-                        </ListItem>
-                        <ListItem>
+                        </List.Item>
+                        <List.Item>
                             <InputGroup>
-                                <Icon name="ios-unlock" style={{ color: '#0A69FE' }} />
-                                <Input placeholder="PASSWORD" secureTextEntry />
-                            </InputGroup>
-                        </ListItem>
-                        <ListItem>
-                            <InputGroup>
-                                <Icon name="ios-call" style={{ color: '#0A69FE' }} />
-                                <Input placeholder="PHONE" keyboardType="numeric" />
-                            </InputGroup>
-                        </ListItem>
 
-                        <ListItem iconLeft>
-                            <Icon name="ios-transgender" style={{ color: '#0A69FE' }} />
-                            <Text>GENDER</Text>
-                            <Picker
-                                iosHeader="Select one"
-                                mode="dropdown"
-                                selectedValue={this.state.selected1}
-                                onValueChange={this.onValueChange.bind(this)} >
-                                <Item label="Male" value="key0" />
-                                <Item label="Female" value="key1" />
-                                <Item label="Other" value="key2" />
-                            </Picker>
-                        </ListItem>
-
-                        <ListItem>
-                            <InputGroup >
-                                <Input stackedLabel label="Permanent Address" placeholder="Address" />
+                                <Input placeholder="当前里程" keyboardType="numeric"
+                                    onChangeText={this.onChange_trip} />
                             </InputGroup>
-                        </ListItem>
+                        </List.Item>
+                        <List.Item>
+                            <InputGroup>
+
+                                <Input placeholder="预计里程" keyboardType="numeric"
+                                    onChangeText={this.onChange_preTrip} />
+                            </InputGroup>
+                        </List.Item>
+                        <List.Item>
+                            <InputGroup>
+
+                                <Input placeholder="实际里程" keyboardType="numeric"
+                                    onChangeText={this.onChange_realTrip} />
+                            </InputGroup>
+                        </List.Item>
                     </List>
                     <Button onPress={() => this.AddNew()} style={{ alignSelf: 'center', marginTop: 20, marginBottom: 20 }} >
-                        <Text> Sign Up</Text>
+                        <Text>保存</Text>
                     </Button>
                 </Content>
             </Container>
